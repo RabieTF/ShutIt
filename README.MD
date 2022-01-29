@@ -26,8 +26,16 @@ Create a .env file containing your Firebase configuration information according 
 Build the app using the following commands:
 
 ```shell
-$ expo build:android -t apk (if you're using android on the target mobile)
-$ expo build:ios -t (archive or simulator) (if you're using IOS on the target mobile)
+npm install expo-cli -g
+```
+
+if you're using android on the target mobile:
+```shell
+$ expo build:android -t apk
+```
+if you're using IOS on the target mobile:
+```shell
+$ expo build:ios -t (archive or simulator) 
 ```
 
 Use `simulator` if the target platform is an IOS simulator.
