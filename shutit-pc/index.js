@@ -25,63 +25,67 @@ const db = getDatabase(app);
 
 const auth = getAuth();
 
-signInWithEmailAndPassword(auth, email, password);
+let shutDownRef, lockRef, restartRef, errRef;
+
+signInWithEmailAndPassword(auth, email, password)
+.then(() => {
+    shutDownRef = ref(db, '/shutdown');
+    lockRef = ref(db, '/lockdown');
+    restartRef = ref(db, '/restart');
+    errRef = ref(db, '/err');
+    set(shutDownRef, false);
+    set(lockRef, false);
+    set(restartRef, false);
+    set(errRef, false);
+
+    onValue(shutDownRef, (snapshot) => {
+        const data = snapshot.val();
+        if (data) {
+            set(shutDownRef, false);
+    
+            // Execute shell command to shutdown
+            exec('shutdown /p', (err, stdout, stderr) => {
+                if (err){
+                    set(errRef,true);
+                }
+            });
+        }
+    });
+    
+    onValue(lockRef, (snapshot) => {
+        const data = snapshot.val();
+        if (data) {
+            set(lockRef, false);
+    
+            // Execute shell command to log off the session
+            // Ideal would be rundll32.exe user32.dll,LockWorkStation to preserve data 
+            // but for some reason it doesn't work when I run the script as a Windows service
+            // sad :/
+            exec('shutdown /l', (err, stdout, stderr) => {
+                if (err){
+                    set(errRef,true);
+                }
+            });
+        }
+    });
+    
+    onValue(restartRef, (snapshot) => {
+        const data = snapshot.val();
+        if (data) {
+            set(restartRef, false);
+    
+            // Execute shell command to restart
+            exec('shutdown /r', (err, stdout, stderr) => {
+                if (err){
+                    set(errRef,true);
+                }
+            });
+        }
+    });
+        
+})
 
 
-const shutDownRef = ref(db, '/shutdown');
-const lockRef = ref(db, '/lockdown');
-const restartRef = ref(db, '/restart');
-const errRef = ref(db, '/err');
 
-set(shutDownRef, false);
-set(lockRef, false);
-set(restartRef, false);
-set(errRef, false);
-
-
-onValue(shutDownRef, (snapshot) => {
-    const data = snapshot.val();
-    if (data) {
-        set(shutDownRef, false);
-
-        // Execute shell command to shutdown
-        exec('shutdown /p', (err, stdout, stderr) => {
-            if (err){
-                set(errRef,true);
-            }
-        });
-    }
-});
-
-onValue(lockRef, (snapshot) => {
-    const data = snapshot.val();
-    if (data) {
-        set(lockRef, false);
-
-        // Execute shell command to log off the session
-        // Ideal would be rundll32.exe user32.dll,LockWorkStation to preserve data 
-        // but for some reason it doesn't work when I run the script as a Windows service
-        // sad :/
-        exec('shutdown /l', (err, stdout, stderr) => {
-            if (err){
-                set(errRef,true);
-            }
-        });
-    }
-});
-
-onValue(restartRef, (snapshot) => {
-    const data = snapshot.val();
-    if (data) {
-        set(restartRef, false);
-
-        // Execute shell command to restart
-        exec('shutdown /r', (err, stdout, stderr) => {
-            if (err){
-                set(errRef,true);
-            }
-        });
-    }
-});
 
 
