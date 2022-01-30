@@ -4,9 +4,13 @@ It uses Node.js ran as a Windows service (hence the serviceSetup.js in the shuti
 
 On the user end, it runs a React Native application made for the purpose.
 
-## Installation
+## Requirements
+* A Firebase project. [Create one here](https://console.firebase.google.com/)
+* A machine running Windows (Application tested on Windows 10/11).
+* A mobile phone (IOS or Android), or an Android/IOS emulator on your machine.
+* Node.js (Application tested on Node.js 14.15.0) installed on your machine.
 
-(Uses Node.js 14.15.0)
+## Installation
 
 ```shell
 $ git clone https://github.com/RabieTF/ShutIt.git
